@@ -1,0 +1,15 @@
+{
+  "name": "sudoku-gang",
+  "version": "1.0.0",
+  "description": "Live multiplayer sudoku for mobile browsers. No ads.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

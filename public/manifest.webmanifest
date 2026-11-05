@@ -1,0 +1,10 @@
+{
+  "name": "Sudoku Gang",
+  "short_name": "Sudoku Gang",
+  "description": "ซูโดกุแข่งกับเพื่อนแบบสด ๆ ไม่มีโฆษณา",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f1e7",
+  "theme_color": "#f6f1e7",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

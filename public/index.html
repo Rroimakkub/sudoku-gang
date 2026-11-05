@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f1e7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Sudoku Gang</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <section id="v-home" class="view">
+    <header class="top">
+      <a class="brand" href="#/"><span class="logo"></span>Sudoku Gang</a>
+      <button class="icon-btn js-theme" aria-label="สลับโหมดมืด">◐</button>
+    </header>
+    <div class="hero">
+      <h1>ซูโดกุ<br><em>แข่งกับเพื่อน</em> สด ๆ</h1>
+      <p class="sub">โจทย์เดียวกัน เวลาเดียวกัน ใครเร็วกว่าได้แต้มมากกว่า เล่นได้สูงสุด 10 คน ไม่มีโฆษณา</p>
+      <div class="stack">
+        <a class="btn primary" href="#/create">สร้างห้อง</a>
+        <a class="btn ghost" href="#/lobby">หาห้องที่เปิดอยู่</a>
+      </div>
+      <form id="join-form" class="join">
+        <label for="join-code">มีรหัสห้องจากเพื่อน?</label>
+        <div class="join-row">
+          <input id="join-code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" inputmode="text">
+          <button class="btn primary" type="submit">เข้า</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="rules">
+      <h2>วิธีเล่น</h2>
+      <div class="rule-card">
+        <h3><span class="tag">คลาสสิก</span> แย่งกันเติมทีละช่อง</h3>
+        <ul class="pts">
+          <li><b>+10</b> คนแรกที่เติมช่องนั้นถูก</li>
+          <li><b>+6</b> คนที่สอง</li>
+          <li><b>+3</b> คนที่สาม</li>
+          <li><b>+1</b> คนที่เหลือ</li>
+          <li class="bad"><b>−5</b> เติมผิด และช่องนั้นจะถูกล็อก</li>
+        </ul>
+        <p class="note">ช่องที่ใครเติมถูกก่อนจะเป็นสีของคนนั้น เกมจบเมื่อมีคนเติมกระดานครบ แต้มสูงสุดชนะ</p>
+      </div>
+      <div class="rule-card">
+        <h3><span class="tag dark">ฮาร์ดคอร์</span> ใครเสร็จก่อนชนะ</h3>
+        <p class="note">ไม่มีแต้ม ไม่มีตัวช่วย เติมผิดก็ไม่บอก เห็นแค่ % ความคืบหน้าของเพื่อน คนแรกที่แก้ถูกทั้งกระดานชนะ</p>
+      </div>
+      <ol class="steps">
+        <li><b>สร้างห้อง</b> เลือกระดับและโหมด</li>
+        <li><b>ส่งรหัส 4 ตัว</b> หรือลิงก์ให้เพื่อน ทุกคนได้สีของตัวเอง</li>
+        <li><b>หัวห้องกดเริ่ม</b> เมื่อทุกคนพร้อม</li>
+        <li><b>จบแล้วเล่นต่อ</b> ห้องถัดไปเตรียมไว้ให้อัตโนมัติ</li>
+      </ol>
+    </div>
+    <footer class="foot">ทำขึ้นเพื่อเล่นกับเพื่อน · ไม่มีโฆษณา</footer>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="v-lobby" class="view">
+    <header class="top">
+      <a class="back" href="#/">‹</a>
+      <h2 class="title">ห้องที่เปิดอยู่</h2>
+      <button class="icon-btn" id="lobby-refresh" aria-label="รีเฟรช">↻</button>
+    </header>
+    <p class="sub center" id="lobby-count">กำลังโหลด…</p>
+    <div id="lobby-list"></div>
+    <div class="card center">
+      <p>ยังไม่เจอห้องที่ชอบ? สร้างห้องสาธารณะแล้วรอคนมาร่วม</p>
+      <a class="btn primary" href="#/create?public=1">สร้างห้อง</a>
+    </div>
+  </section>
+
+  <!-- CREATE -->
+  <section id="v-create" class="view">
+    <header class="top">
+      <a class="back" href="#/">‹</a>
+      <h2 class="title">สร้างห้องใหม่</h2>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="form">
+      <h4>ระดับความยาก</h4>
+      <div class="seg" data-name="difficulty">
+        <button data-v="easy">ง่าย</button>
+        <button data-v="medium" class="on">กลาง</button>
+        <button data-v="hard">ยาก</button>
+        <button data-v="extreme">โหด</button>
+      </div>
+      <h4>โหมด</h4>
+      <div class="choices" data-name="mode">
+        <button data-v="original" class="on"><b>คลาสสิก</b><span>แย่งเติมทีละช่อง ได้ 10, 6, 3 หรือ 1 แต้ม</span></button>
+        <button data-v="hardcore"><b>ฮาร์ดคอร์</b><span>ไม่มีแต้ม ไม่มีตัวช่วย ใครเสร็จก่อนชนะ</span></button>
+      </div>
+      <h4>ใครเข้าได้บ้าง</h4>
+      <div class="choices" data-name="visibility">
+        <button data-v="private" class="on"><b>ส่วนตัว</b><span>เฉพาะคนที่มีรหัส</span></button>
+        <button data-v="public"><b>สาธารณะ</b><span>ใครก็เห็นในรายการห้อง</span></button>
+      </div>
+      <button class="btn primary wide" id="create-btn">สร้างห้อง</button>
+    </div>
+  </section>
+
+  <!-- ROOM -->
+  <section id="v-room" class="view room">
+    <header class="top slim">
+      <button class="back" id="room-back" aria-label="ออกจากห้อง">‹</button>
+      <div class="room-meta">
+        <span class="code" id="room-code">----</span>
+        <span class="badge" id="room-info"></span>
+      </div>
+      <span class="timer" id="timer">0:00</span>
+      <button class="icon-btn" id="open-settings" aria-label="ตั้งค่า">⚙</button>
+    </header>
+
+    <div id="players" class="players"></div>
+
+    <!-- waiting -->
+    <div id="waiting" class="waiting">
+      <p class="sub">ส่งรหัสนี้ให้เพื่อน</p>
+      <div class="big-code" id="big-code">----</div>
+      <div class="row">
+        <button class="btn ghost" id="share-btn">แชร์ลิงก์</button>
+        <button class="btn ghost" id="copy-btn">คัดลอกรหัส</button>
+      </div>
+      <div id="wait-list" class="wait-list"></div>
+      <button class="btn primary wide" id="start-btn">เริ่มเกม</button>
+      <p class="sub center" id="wait-msg">รอหัวห้องกดเริ่ม…</p>
+    </div>
+
+    <!-- game -->
+    <div id="game" class="game">
+      <div class="board-wrap"><div id="board" class="board"></div><div id="fx" class="fx"></div></div>
+      <div class="tools">
+        <button class="tool" id="t-notes"><span class="ico">✎</span><span>โน้ต <i id="notes-state">ปิด</i></span></button>
+        <button class="tool" id="t-erase"><span class="ico">⌫</span><span>ลบ</span></button>
+        <button class="tool" id="t-chat"><span class="ico">💬</span><span>แชต</span><i class="dot" id="chat-dot"></i></button>
+      </div>
+      <div class="pad" id="pad"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- sheets & modals -->
+<div class="scrim" id="scrim"></div>
+
+<div class="sheet" id="chat-sheet">
+  <div class="sheet-head"><b>แชต</b><button class="icon-btn js-close">✕</button></div>
+  <div class="chat-list" id="chat-list"></div>
+  <form class="chat-form" id="chat-form">
+    <input id="chat-input" maxlength="200" placeholder="พิมพ์ข้อความ…" autocomplete="off">
+    <button class="btn primary" type="submit">ส่ง</button>
+  </form>
+  <div class="quick" id="quick">
+    <button>พร้อม! 👍</button><button>เร็วไปไหน 😱</button><button>อีกตา! 🔁</button><button>GG 🎉</button>
+  </div>
+</div>
+
+<div class="sheet" id="settings-sheet">
+  <div class="sheet-head"><b>ตั้งค่า</b><button class="icon-btn js-close">✕</button></div>
+  <label class="switch"><span>สีของผู้เล่นบนกระดาน</span><input type="checkbox" id="opt-colors"><i></i></label>
+  <label class="switch"><span>ไฮไลต์เลขเดียวกัน</span><input type="checkbox" id="opt-same"><i></i></label>
+  <label class="switch"><span>ลบโน้ตอัตโนมัติเมื่อเติมถูก</span><input type="checkbox" id="opt-autonotes"><i></i></label>
+  <label class="switch"><span>สั่นเมื่อเติมผิด</span><input type="checkbox" id="opt-vibrate"><i></i></label>
+  <label class="switch"><span>โหมดมืด</span><input type="checkbox" id="opt-dark"><i></i></label>
+  <button class="btn ghost wide" id="rename-btn">เปลี่ยนชื่อ</button>
+  <button class="btn danger wide" id="leave-btn">ออกจากห้อง</button>
+</div>
+
+<div class="modal" id="name-modal">
+  <form class="modal-card" id="name-form">
+    <h3>ชื่อของคุณ</h3>
+    <p class="sub">เพื่อน ๆ จะเห็นชื่อนี้ในเกม</p>
+    <input id="name-input" maxlength="16" autocomplete="nickname" placeholder="เช่น ต้น">
+    <button class="btn primary wide" type="submit">ตกลง</button>
+  </form>
+</div>
+
+<div class="modal" id="result-modal">
+  <div class="modal-card">
+    <h3 id="result-title">จบเกม!</h3>
+    <ol class="ranking" id="ranking"></ol>
+    <button class="btn primary wide" id="next-btn">เล่นเกมถัดไป</button>
+    <button class="btn ghost wide" id="view-board-btn">ดูกระดาน</button>
+    <a class="btn ghost wide" href="#/">กลับหน้าแรก</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
