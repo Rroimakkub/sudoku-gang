@@ -35,6 +35,7 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   background: var(--bg);
   color: var(--ink);
@@ -176,13 +177,20 @@ a { color: inherit; text-decoration: none; }
 .room.waitingroom .timer { visibility: hidden; }
 
 /* board */
-.board-wrap { position: relative; width: min(100%, calc(100dvh - 270px)); min-width: 280px; margin: 0 auto; }
+.board-wrap {
+  position: relative; width: min(100%, calc(100vh - 270px)); width: min(100%, calc(100dvh - 270px));
+  min-width: min(280px, 100%); margin: 0 auto; container-type: inline-size;
+}
+/* Rows and columns are fixed to equal ninths so the grid stays square whatever the digit size or font. */
 .board {
-  display: grid; grid-template-columns: repeat(9, 1fr); aspect-ratio: 1; background: var(--panel);
+  display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); grid-template-rows: repeat(9, minmax(0, 1fr));
+  aspect-ratio: 1 / 1; width: 100%; background: var(--panel);
   border: 2.5px solid var(--thick); border-radius: 12px; overflow: hidden; user-select: none; -webkit-user-select: none;
 }
 .cell {
-  position: relative; display: grid; place-items: center; font-size: clamp(18px, 5.6vw, 28px); font-weight: 500;
+  position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; overflow: hidden;
+  font-size: clamp(16px, 5.4vw, 28px); font-size: clamp(14px, 6.4cqw, 34px); line-height: 1; font-weight: 500;
+  font-variant-numeric: tabular-nums;
   border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); cursor: pointer; z-index: 0;
 }
 .cell.c3 { border-right: 2px solid var(--thick); }
@@ -209,7 +217,7 @@ a { color: inherit; text-decoration: none; }
 @keyframes flash { 0% { transform: scale(1.25); } 100% { transform: scale(1); } }
 .cell.shake { animation: shake .35s ease; }
 @keyframes shake { 0%,100% { transform: none; } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-.cell .notes { position: absolute; inset: 1px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); font-size: clamp(8px, 2.4vw, 12px); color: var(--muted); line-height: 1; }
+.cell .notes { position: absolute; inset: 1px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); font-size: clamp(8px, 2.4vw, 12px); font-size: clamp(7px, 2.6cqw, 13px); color: var(--muted); line-height: 1; }
 .cell .notes span { display: grid; place-items: center; }
 .cell .notes span.hl { color: var(--accent); font-weight: 700; }
 
@@ -229,7 +237,7 @@ a { color: inherit; text-decoration: none; }
 .tool.on .ico { color: var(--bg); }
 .tool .dot { position: absolute; top: 2px; right: 10px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); display: none; }
 .tool .dot.show { display: block; }
-.pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; max-width: 520px; margin: 0 auto; }
+.pad { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; max-width: 520px; margin: 0 auto; }
 .pad button {
   height: 60px; border-radius: 12px; background: var(--panel); box-shadow: var(--shadow);
   display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 26px; font-weight: 600; line-height: 1;
